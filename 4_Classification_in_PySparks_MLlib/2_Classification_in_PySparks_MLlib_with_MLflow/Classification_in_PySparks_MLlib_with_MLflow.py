@@ -72,8 +72,11 @@ from pyspark.sql.types import *
 
 path = "Datasets/autism-screening-for-toddlers/"
 df = spark.read.csv(
-    path + "Toddler Autism dataset July 2018.csv", inferSchema=True, header=True
+    f"{path}Toddler Autism dataset July 2018.csv",
+    inferSchema=True,
+    header=True,
 )
+
 
 
 # ### Check out the dataset
@@ -169,11 +172,11 @@ for column in input_columns:
     # First identify the string vars in your input column list
     if str(indexed.schema[column].dataType) == "StringType":
         # Set up your String Indexer function
-        indexer = StringIndexer(inputCol=column, outputCol=column + "_num")
+        indexer = StringIndexer(inputCol=column, outputCol=f"{column}_num")
         # Then call on the indexer you created here
         indexed = indexer.fit(indexed).transform(indexed)
         # Rename the column to a new name so you can disinguish it from the original
-        new_col_name = column + "_num"
+        new_col_name = f"{column}_num"
         # Add the new column name to the string inputs list
         string_inputs.append(new_col_name)
     else:
@@ -192,13 +195,10 @@ for column in input_columns:
 # This is best practice
 
 # create empty dictionary d
-d = {}
-# Create a dictionary of quantiles from your numeric cols
-# I'm doing the top and bottom 1% but you can adjust if needed
-for col in numeric_inputs:
-    d[col] = indexed.approxQuantile(
-        col, [0.01, 0.99], 0.25
-    )  # if you want to make it go faster increase the last number
+d = {
+    col: indexed.approxQuantile(col, [0.01, 0.99], 0.25)
+    for col in numeric_inputs
+}
 
 # Now check for skewness for all numeric cols
 for col in numeric_inputs:
@@ -217,8 +217,11 @@ for col in numeric_inputs:
             ).alias(col),
         )
         print(
-            col + " has been treated for positive (right) skewness. (skew =)", skew, ")"
+            f"{col} has been treated for positive (right) skewness. (skew =)",
+            skew,
+            ")",
         )
+
     elif skew < -1:  # If left skew floor, cap and exp(x)
         indexed = indexed.withColumn(
             col,
@@ -229,8 +232,11 @@ for col in numeric_inputs:
             ).alias(col),
         )
         print(
-            col + " has been treated for negative (left) skewness. (skew =", skew, ")"
+            f"{col} has been treated for negative (left) skewness. (skew =",
+            skew,
+            ")",
         )
+
 
 
 # In[15]:
@@ -359,11 +365,10 @@ def create_run(experiment_name):
             #             print(experiment_name)
             #             print(x)
             experiment_index = experiments.index(x)
-            run = client.create_run(
-                experiments[experiment_index].experiment_id
-            )  # returns mlflow.entities.Run
             #             print(run)
-            return run
+            return client.create_run(
+                experiments[experiment_index].experiment_id
+            )
 
 
 # Example run command

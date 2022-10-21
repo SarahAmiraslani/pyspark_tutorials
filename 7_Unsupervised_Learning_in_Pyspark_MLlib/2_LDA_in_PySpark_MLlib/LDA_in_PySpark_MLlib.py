@@ -68,7 +68,7 @@ from pyspark.sql.types import *
 
 
 path = "Datasets/"
-df = spark.read.json(path + "recipes.json")
+df = spark.read.json(f"{path}recipes.json")
 
 
 # **View data as always**
@@ -246,8 +246,8 @@ model = lda.fit(df_vect)
 print("Recap of ll and lp:")
 ll = model.logLikelihood(df_vect)
 lp = model.logPerplexity(df_vect)
-print("The lower bound on the log likelihood of the entire corpus: " + str(ll))
-print("The upper bound on perplexity: " + str(lp))
+print(f"The lower bound on the log likelihood of the entire corpus: {str(ll)}")
+print(f"The upper bound on perplexity: {str(lp)}")
 print("Vocab Size: ", model.vocabSize())
 
 # Describe topics.
@@ -259,7 +259,7 @@ vocablist = cvmodel.vocabulary
 # Enumerate adds a counter to topics and returns it in a form of enumerate object.
 for x, topic in enumerate(topics):
     print(" ")
-    print("TOPIC: " + str(x))
+    print(f"TOPIC: {str(x)}")
     # This is like a temp holder
     topic = topics
     # Then we extract the words from the topics

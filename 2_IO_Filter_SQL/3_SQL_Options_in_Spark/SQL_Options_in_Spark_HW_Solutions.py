@@ -41,7 +41,10 @@ spark
 
 path = "Datasets/"
 
-googlep = spark.read.csv(path + "googleplaystore.csv", header=True, inferSchema=True)
+googlep = spark.read.csv(
+    f"{path}googleplaystore.csv", header=True, inferSchema=True
+)
+
 
 
 # ## First things first

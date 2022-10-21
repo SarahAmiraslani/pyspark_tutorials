@@ -77,7 +77,7 @@ from pyspark.sql.types import *  # StringType,IntegerType
 path = "Datasets/"
 
 # CSV
-df = spark.read.csv(path + "kickstarter.csv", inferSchema=True, header=True)
+df = spark.read.csv(f"{path}kickstarter.csv", inferSchema=True, header=True)
 
 
 # In[7]:

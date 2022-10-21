@@ -52,7 +52,7 @@ spark
 path = "Datasets/"
 
 # Some csv data
-students = spark.read.csv(path + "students.csv", inferSchema=True, header=True)
+students = spark.read.csv(f"{path}students.csv", inferSchema=True, header=True)
 
 
 # **Parquet Files**
@@ -63,7 +63,7 @@ students = spark.read.csv(path + "students.csv", inferSchema=True, header=True)
 # In[17]:
 
 
-parquet = spark.read.parquet(path + "users1.parquet")
+parquet = spark.read.parquet(f"{path}users1.parquet")
 parquet.show(2)
 
 
@@ -74,7 +74,7 @@ parquet.show(2)
 # In[ ]:
 
 
-partitioned = spark.read.parquet(path + "users*")
+partitioned = spark.read.parquet(f"{path}users*")
 partitioned.show(2)
 
 
@@ -87,8 +87,9 @@ partitioned.show(2)
 # that will exclude the partitioned variable in resulting dataframe.
 # I prefer to have the partitioning info in my new dataframe personally.
 users1_2 = spark.read.option("basePath", path).parquet(
-    path + "users1.parquet", path + "users2.parquet"
+    f"{path}users1.parquet", f"{path}users2.parquet"
 )
+
 users1_2.show()
 
 
@@ -103,10 +104,9 @@ key2 = "partition_test/Table1/CREATED_YEAR=2017/*"
 key3 = "partition_test/Table1/CREATED_YEAR=2018/*"
 
 test_df = spark.read.parquet(
-    "s3://" + bucket + "/" + key1,
-    "s3://" + bucket + "/" + key2,
-    "s3://" + bucket + "/" + key3,
+    f"s3://{bucket}/{key1}", f"s3://{bucket}/{key2}", f"s3://{bucket}/{key3}"
 )
+
 
 test_df.show(1)
 
@@ -219,7 +219,7 @@ final_struc = StructType(fields=data_schema)
 # In[ ]:
 
 
-people = spark.read.json(path + "people.json", schema=final_struc)
+people = spark.read.json(f"{path}people.json", schema=final_struc)
 
 
 # In[ ]:
@@ -258,8 +258,10 @@ java_import(spark._jvm, "org.apache.hadoop.fs.Path")
 fs = spark._jvm.org.apache.hadoop.fs.FileSystem.get(spark._jsc.hadoopConfiguration())
 file = fs.globStatus(spark._jvm.Path("write_test.csv/part*"))[0].getPath().getName()
 fs.rename(
-    spark._jvm.Path("write_test.csv/" + file), spark._jvm.Path("write_test2.csv")
-)  # these two need to be different
+    spark._jvm.Path(f"write_test.csv/{file}"),
+    spark._jvm.Path("write_test2.csv"),
+)
+
 fs.delete(spark._jvm.Path("write_test.csv"), True)
 
 

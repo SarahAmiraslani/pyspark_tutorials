@@ -56,7 +56,10 @@ from pyspark.sql.types import IntegerType, StringType
 path = "Datasets/"
 
 # CSV
-postings = spark.read.csv(path + "fake_job_postings.csv", inferSchema=True, header=True)
+postings = spark.read.csv(
+    f"{path}fake_job_postings.csv", inferSchema=True, header=True
+)
+
 
 
 # **View the data for QA**

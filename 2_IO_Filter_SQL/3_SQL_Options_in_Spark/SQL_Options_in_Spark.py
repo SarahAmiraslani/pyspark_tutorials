@@ -75,7 +75,10 @@ spark
 
 path = "Datasets/"
 
-crime = spark.read.csv(path + "rec-crime-pfa.csv", header=True, inferSchema=True)
+crime = spark.read.csv(
+    f"{path}rec-crime-pfa.csv", header=True, inferSchema=True
+)
+
 
 
 # In[16]:

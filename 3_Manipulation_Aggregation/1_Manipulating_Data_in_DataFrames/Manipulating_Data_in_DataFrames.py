@@ -78,7 +78,10 @@ print(names.rdd.id())
 
 
 path = "Datasets/"
-videos = spark.read.csv(path + "youtubevideos.csv", inferSchema=True, header=True)
+videos = spark.read.csv(
+    f"{path}youtubevideos.csv", inferSchema=True, header=True
+)
+
 
 
 # ## About this dataset

@@ -72,7 +72,10 @@ spark
 
 
 path = "Datasets/"
-df = spark.read.csv(path + "CollegeScorecard.csv", inferSchema=True, header=True)
+df = spark.read.csv(
+    f"{path}CollegeScorecard.csv", inferSchema=True, header=True
+)
+
 
 
 # **View data**
@@ -106,10 +109,11 @@ def fill_with_mean(df, include=set()):
 
 
 columns = df.columns
-input_columns = []
-for column in columns:
-    if str(df.schema[column].dataType) in ("IntegerType", "DoubleType"):
-        input_columns.append(column)
+input_columns = [
+    column
+    for column in columns
+    if str(df.schema[column].dataType) in {"IntegerType", "DoubleType"}
+]
 
 input_columns
 df = fill_with_mean(df, input_columns)
@@ -182,7 +186,7 @@ predictions = model.transform(final_df)
 evaluator = ClusteringEvaluator()
 
 silhouette = evaluator.evaluate(predictions)
-print("Silhouette with squared euclidean distance = " + str(silhouette))
+print(f"Silhouette with squared euclidean distance = {str(silhouette)}")
 
 
 # ## Describe the clusters in lamens terms

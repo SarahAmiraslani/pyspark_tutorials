@@ -81,7 +81,10 @@ spark
 
 
 path = "Datasets/"
-df = spark.read.csv(path + "credit_card_data.csv", inferSchema=True, header=True)
+df = spark.read.csv(
+    f"{path}credit_card_data.csv", inferSchema=True, header=True
+)
+
 
 
 # In[3]:
@@ -299,7 +302,7 @@ predictions = model.transform(df_kmeans)
 evaluator = ClusteringEvaluator()
 
 silhouette = evaluator.evaluate(predictions)
-print("Silhouette with squared euclidean distance = " + str(silhouette))
+print(f"Silhouette with squared euclidean distance = {str(silhouette)}")
 print(" ")
 
 # Shows the cluster centers

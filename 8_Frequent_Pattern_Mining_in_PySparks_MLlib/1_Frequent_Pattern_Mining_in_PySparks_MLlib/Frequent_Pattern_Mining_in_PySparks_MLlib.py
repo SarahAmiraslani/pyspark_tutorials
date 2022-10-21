@@ -112,8 +112,9 @@ spark
 
 path = "Datasets/Big Five Personality Test/"
 df = spark.read.option("delimiter", "\t").csv(
-    path + "data-final.csv", inferSchema=True, header=True
+    f"{path}data-final.csv", inferSchema=True, header=True
 )
+
 
 
 # In[5]:
