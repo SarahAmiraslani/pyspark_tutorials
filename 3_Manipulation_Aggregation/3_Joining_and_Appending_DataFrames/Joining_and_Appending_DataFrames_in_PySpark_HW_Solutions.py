@@ -46,7 +46,7 @@ for filename in os.listdir(path):
         df = spark.read.csv(path + filename, inferSchema=True, header=True)
         df.name = df_name
         df_list.append(df_name)
-        exec(df_name + " = df")
+        exec(f"{df_name} = df")
 
 # QA
 print("Full list of dfs:")

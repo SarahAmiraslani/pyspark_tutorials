@@ -40,7 +40,10 @@ spark
 
 
 path = "Datasets/"
-df = spark.read.csv(path + "sales_data_sample.csv", inferSchema=True, header=True)
+df = spark.read.csv(
+    f"{path}sales_data_sample.csv", inferSchema=True, header=True
+)
+
 
 
 # In[9]:

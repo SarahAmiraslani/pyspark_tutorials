@@ -74,21 +74,22 @@ spark
 path = "Datasets/"
 
 # CSV
-df = spark.read.csv(path + "students.csv", inferSchema=True, header=True)
+df = spark.read.csv(f"{path}students.csv", inferSchema=True, header=True)
 
 # Json
-people = spark.read.json(path + "people.json")
+people = spark.read.json(f"{path}people.json")
 
 # Parquet
-parquet = spark.read.parquet(path + "users.parquet")
+parquet = spark.read.parquet(f"{path}users.parquet")
 
 # Partioned Parquet
-partitioned = spark.read.parquet(path + "users*")
+partitioned = spark.read.parquet(f"{path}users*")
 
 # Parts of a partitioned Parquet
 users1_2 = spark.read.option("basePath", path).parquet(
-    path + "users1.parquet", path + "users2.parquet"
+    f"{path}users1.parquet", f"{path}users2.parquet"
 )
+
 
 
 # ### Notice the type differences here
@@ -189,7 +190,7 @@ data_schema = [
     StructField("name", StringType(), True),
 ]
 final_struc = StructType(fields=data_schema)
-people = spark.read.json(path + "people.json", schema=final_struc)
+people = spark.read.json(f"{path}people.json", schema=final_struc)
 
 
 # ## Writing Data
@@ -344,7 +345,7 @@ df2 = df.limit(300)
 print("Sliced row count:", df2.count())
 
 # Slice columns
-cols_list = df.columns[0:5]
+cols_list = df.columns[:5]
 df3 = df.select(cols_list)
 print("Sliced column count:", len(df3.columns))
 

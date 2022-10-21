@@ -56,7 +56,7 @@ spark
 
 
 path = "Datasets/"
-df = spark.read.csv(path + "Concrete_Data.csv", inferSchema=True, header=True)
+df = spark.read.csv(f"{path}Concrete_Data.csv", inferSchema=True, header=True)
 
 
 # **View data**
@@ -119,16 +119,16 @@ def MLRegressDFPrep(
     string_inputs = []
     for column in input_columns:
         if str(renamed.schema[column].dataType) == "StringType":
-            new_col_name = column + "_num"
+            new_col_name = f"{column}_num"
             string_inputs.append(new_col_name)
         else:
             numeric_inputs.append(column)
             indexed = renamed
 
-    if len(string_inputs) != 0:  # If the datafraem contains string types
+    if string_inputs:  # If the datafraem contains string types
         for column in input_columns:
             if str(renamed.schema[column].dataType) == "StringType":
-                indexer = StringIndexer(inputCol=column, outputCol=column + "_num")
+                indexer = StringIndexer(inputCol=column, outputCol=f"{column}_num")
                 indexed = indexer.fit(renamed).transform(renamed)
     else:
         indexed = renamed
@@ -136,12 +136,11 @@ def MLRegressDFPrep(
     if treat_outliers == True:
         print("We are correcting for non normality now!")
         # empty dictionary d
-        d = {}
-        # Create a dictionary of quantiles
-        for col in numeric_inputs:
-            d[col] = indexed.approxQuantile(
-                col, [0.01, 0.99], 0.25
-            )  # if you want to make it go faster increase the last number
+        d = {
+            col: indexed.approxQuantile(col, [0.01, 0.99], 0.25)
+            for col in numeric_inputs
+        }
+
         # Now fill in the values
         for col in numeric_inputs:
             skew = indexed.agg(skewness(indexed[col])).collect()  # check for skewness
@@ -158,10 +157,11 @@ def MLRegressDFPrep(
                     ).alias(col),
                 )
                 print(
-                    col + " has been treated for positive (right) skewness. (skew =)",
+                    f"{col} has been treated for positive (right) skewness. (skew =)",
                     skew,
                     ")",
                 )
+
             elif skew < -1:
                 indexed = indexed.withColumn(
                     col,
@@ -172,10 +172,11 @@ def MLRegressDFPrep(
                     ).alias(col),
                 )
                 print(
-                    col + " has been treated for negative (left) skewness. (skew =",
+                    f"{col} has been treated for negative (left) skewness. (skew =",
                     skew,
                     ")",
                 )
+
 
     # Produce a warning if there are negative values in the dataframe that Naive Bayes cannot be used.
     # Note: we only need to check the numeric input values since anything that is indexed won't have negative values
@@ -555,7 +556,7 @@ print("Linear Regression best features: ", LR_Pvalues)
 values = [(540, 0.0, 0.0, 162, 2.5, 1040, 676, 28)]
 # Fetch the column names
 column_names = df.columns
-column_names = column_names[0:8]
+column_names = column_names[:8]
 # Map values to column names (always better to soft code :) )
 # test = spark.createDataFrame(values,["cement","slag","flyash","water","superplasticizer","coarseaggregate","fineaggregate","age"])
 test = spark.createDataFrame(values, column_names)

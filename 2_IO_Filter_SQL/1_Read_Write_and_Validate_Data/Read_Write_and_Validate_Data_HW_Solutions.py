@@ -46,7 +46,10 @@ spark
 path = "Datasets/"
 
 # Some csv data
-pga = spark.read.csv(path + "pga_tour_historical.csv", inferSchema=True, header=True)
+pga = spark.read.csv(
+    f"{path}pga_tour_historical.csv", inferSchema=True, header=True
+)
+
 
 
 # ## 1. View first 5 lines of dataframe
@@ -113,7 +116,7 @@ final_struc = StructType(fields=data_schema)
 
 
 path = "Datasets/"
-pga = spark.read.csv(path + "pga_tour_historical.csv", schema=final_struc)
+pga = spark.read.csv(f"{path}pga_tour_historical.csv", schema=final_struc)
 
 
 # In[10]:
@@ -192,8 +195,9 @@ parquet.show()
 # Notice that this method only gives you the "Value" column
 path = "partitioned_parquet/"
 partitioned = spark.read.parquet(
-    path + "Season=2010/", path + "Season=2011/", path + "Season=2012/"
+    f"{path}Season=2010/", f"{path}Season=2011/", f"{path}Season=2012/"
 )
+
 
 partitioned.show(5)
 
@@ -204,8 +208,9 @@ partitioned.show(5)
 # We need to use this method to get the "Season" and "Value" Columns
 path = "partitioned_parquet/"
 dataframe = spark.read.option("basePath", path).parquet(
-    path + "Season=2010/", path + "Season=2011/", path + "Season=2012/"
+    f"{path}Season=2010/", f"{path}Season=2011/", f"{path}Season=2012/"
 )
+
 dataframe.show(5)
 
 

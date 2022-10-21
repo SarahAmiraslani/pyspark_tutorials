@@ -33,7 +33,10 @@ spark
 
 
 path = "Datasets/"
-tweets = spark.read.csv(path + "Rep_vs_Dem_tweets.csv", inferSchema=True, header=True)
+tweets = spark.read.csv(
+    f"{path}Rep_vs_Dem_tweets.csv", inferSchema=True, header=True
+)
+
 
 
 # ## About this dataframe
@@ -312,7 +315,10 @@ month1.show(3)
 
 
 path = "Datasets/"
-sales = spark.read.csv(path + "supermarket_sales.csv", inferSchema=True, header=True)
+sales = spark.read.csv(
+    f"{path}supermarket_sales.csv", inferSchema=True, header=True
+)
+
 
 
 # ## About this dataset

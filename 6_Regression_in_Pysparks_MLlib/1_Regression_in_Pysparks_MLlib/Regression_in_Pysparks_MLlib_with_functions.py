@@ -76,7 +76,7 @@ spark
 
 
 path = "Datasets/"
-df = spark.read.csv(path + "housing.csv", inferSchema=True, header=True)
+df = spark.read.csv(f"{path}housing.csv", inferSchema=True, header=True)
 
 
 # **View data**
@@ -154,16 +154,16 @@ def MLRegressDFPrep(df, input_columns, dependent_var, treat_outliers=True):
     string_inputs = []
     for column in input_columns:
         if str(renamed.schema[column].dataType) == "StringType":
-            new_col_name = column + "_num"
+            new_col_name = f"{column}_num"
             string_inputs.append(new_col_name)
         else:
             numeric_inputs.append(column)
             indexed = renamed
 
-    if len(string_inputs) != 0:  # If the datafraem contains string types
+    if string_inputs:  # If the datafraem contains string types
         for column in input_columns:
             if str(renamed.schema[column].dataType) == "StringType":
-                indexer = StringIndexer(inputCol=column, outputCol=column + "_num")
+                indexer = StringIndexer(inputCol=column, outputCol=f"{column}_num")
                 indexed = indexer.fit(renamed).transform(renamed)
     else:
         indexed = renamed
@@ -171,12 +171,11 @@ def MLRegressDFPrep(df, input_columns, dependent_var, treat_outliers=True):
     if treat_outliers == True:
         print("We are correcting for non normality now!")
         # empty dictionary d
-        d = {}
-        # Create a dictionary of quantiles
-        for col in numeric_inputs:
-            d[col] = indexed.approxQuantile(
-                col, [0.01, 0.99], 0.25
-            )  # if you want to make it go faster increase the last number
+        d = {
+            col: indexed.approxQuantile(col, [0.01, 0.99], 0.25)
+            for col in numeric_inputs
+        }
+
         # Now fill in the values
         for col in numeric_inputs:
             skew = indexed.agg(skewness(indexed[col])).collect()  # check for skewness
@@ -193,10 +192,11 @@ def MLRegressDFPrep(df, input_columns, dependent_var, treat_outliers=True):
                     ).alias(col),
                 )
                 print(
-                    col + " has been treated for positive (right) skewness. (skew =)",
+                    f"{col} has been treated for positive (right) skewness. (skew =)",
                     skew,
                     ")",
                 )
+
             elif skew < -1:
                 indexed = indexed.withColumn(
                     col,
@@ -207,17 +207,16 @@ def MLRegressDFPrep(df, input_columns, dependent_var, treat_outliers=True):
                     ).alias(col),
                 )
                 print(
-                    col + " has been treated for negative (left) skewness. (skew =",
+                    f"{col} has been treated for negative (left) skewness. (skew =",
                     skew,
                     ")",
                 )
 
+
     # Vectorize your features
     features_list = numeric_inputs + string_inputs
     assembler = VectorAssembler(inputCols=features_list, outputCol="features")
-    final_data = assembler.transform(indexed).select("features", "label")
-
-    return final_data
+    return assembler.transform(indexed).select("features", "label")
 
 
 # And apply it
@@ -615,5 +614,5 @@ print(predictions.describe(["diff perct"]).show())
 from datetime import datetime
 
 timestamp = str(datetime.now())  # return local time
-path = "Models/LRModel_" + timestamp
+path = f"Models/LRModel_{timestamp}"
 LR_BestModel.save(path)

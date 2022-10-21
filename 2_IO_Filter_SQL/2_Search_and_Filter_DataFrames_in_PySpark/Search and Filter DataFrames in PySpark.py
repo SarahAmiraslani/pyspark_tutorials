@@ -44,7 +44,7 @@ spark
 
 
 path = "Datasets/"
-fifa = spark.read.csv(path + "fifa19.csv", inferSchema=True, header=True)
+fifa = spark.read.csv(f"{path}fifa19.csv", inferSchema=True, header=True)
 
 
 # ## About this dataframe
@@ -178,7 +178,7 @@ df2 = fifa.limit(300)
 print("Sliced row count:", df2.count())
 
 # Slice columns
-cols_list = fifa.columns[0:5]
+cols_list = fifa.columns[:5]
 df3 = fifa.select(cols_list)
 print("Sliced column count:", len(df3.columns))
 
